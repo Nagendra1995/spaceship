@@ -3,21 +3,6 @@ from django.db import models
 
 
 # Create your models here.
-class spaceship(models.Model):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ship_id = models.PositiveSmallIntegerField(primary_key=True)
-    name = models.CharField(max_length=30, blank=False, unique=True)
-    model = models.CharField(max_length=30, unique=False)
-    # city=models.CharField(max_length=30, unique=False)
-    # planet=models.CharField(max_length=30, unique=False)
-    loc = models.ForenignKey(location, on_delete=models.SET_NULL, null=True)
-    STATUS_CHOICES = (
-        ('decommissioned', 'decommissioned'),
-        ('maintenance', 'maintenance '),
-        ('operational', 'operational'),
-    )
-    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default=None)
-
 
 class location(models.Model):
     # id=models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -38,3 +23,20 @@ class location(models.Model):
 
     class Meta:
         unique_together = ("city", "planet")
+class spaceship(models.Model):
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    ship_id = models.PositiveSmallIntegerField(primary_key=True)
+    name = models.CharField(max_length=30, blank=False, unique=True)
+    model = models.CharField(max_length=30, unique=False)
+    # city=models.CharField(max_length=30, unique=False)
+    # planet=models.CharField(max_length=30, unique=False)
+    loc = models.ForeignKey(location, on_delete=models.CASCADE, default=None)
+    STATUS_CHOICES = (
+        ('decommissioned', 'decommissioned'),
+        ('maintenance', 'maintenance '),
+        ('operational', 'operational'),
+    )
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default=None)
+
+
+
