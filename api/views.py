@@ -15,6 +15,45 @@ RESPONSE = {
 
 # Create your views here.
 @api_view(['POST', ])
+def DelSpaceship(request):
+    if (spaceship.objects.filter(pk=request.data['id']).exists()):
+        for i in spaceship.objects.filter(ship_id=request.data['id']):
+            location_id = i.loc.loc_id
+        for i in location.objects.filter(loc_id=location_id):
+            i.capacity += 1
+            i.save()
+        spaceship.objects.filter(pk=request.data['id']).delete()
+        response = {
+            'success': 'True',
+            'statusCode': "200",
+            'message': 'Spaceship Removed', }
+    else:
+        response = {
+            'success': 'False',
+            'statusCode': "306",
+            'message': 'Spaceship Does not exists',
+        }
+    return Response(response)
+
+
+@api_view(['POST', ])
+def DelLocation(request):
+    if (location.objects.filter(pk=request.data['id']).exists()):
+        location.objects.filter(pk=request.data['id']).delete()
+        response = {
+            'success': 'True',
+            'statusCode': "200",
+            'message': 'Location Removed', }
+    else:
+        response = {
+            'success': 'False',
+            'statusCode': "305",
+            'message': 'Location Does not exists',
+        }
+    return Response(response)
+
+
+@api_view(['POST', ])
 def AddSpaceship(request):
     if (spaceship.objects.filter(pk=request.data['id']).exists()):
         # e=spaceship.objects.filter(pk=request.data['id'])
@@ -22,14 +61,14 @@ def AddSpaceship(request):
             id = i.ship_id
             name = i.name
             model = i.model
-            city = i.city
-            planet = i.planet
+            city = i.loc.city
+            planet = i.loc.planet
             status = i.status
         # print("entered already exists")
         # statusCode = status.HTTP_200_OK
         response = {
             'success': 'False',
-            'statusCode': "312",
+            'statusCode': "304",
             'message': 'Spaceship already exists',
             'data': {
                 'id': id,
@@ -57,7 +96,7 @@ def AddSpaceship(request):
                     else:
                         response = {
                             'success': 'False',
-                            'statusCode': "313",
+                            'statusCode': "303",
                             'message': 'Spaceship location capacity is full',
                         }
                         return Response(response)
@@ -105,7 +144,7 @@ def Addlocation(request):
 
         response = {
             'success': 'False',
-            'statusCode': "314",
+            'statusCode': "302",
             'message': 'Location already exists',
             'data': {
                 'id': id,
