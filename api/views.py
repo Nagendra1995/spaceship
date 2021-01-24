@@ -54,6 +54,73 @@ def DelLocation(request):
 
 
 @api_view(['POST', ])
+def UpdateStatus(request):
+    if (spaceship.objects.filter(pk=request.data['id']).exists()):
+        i = spaceship.objects.filter(ship_id=request.data['id'])[0]
+        i.status = request.data['status']
+        i.save()
+        response = {
+            'success': 'True',
+            'statusCode': "200",
+            'message': 'Spaceship Status Updated',
+            'data': {
+                'id': i.ship_id,
+                'name': i.name,
+                'model': i.model,
+                'city': i.loc.city,
+                'planet': i.loc.planet,
+                'status': i.status,
+            }}
+    else:
+        response = {
+            'success': 'False',
+            'statusCode': "306",
+            'message': 'Spaceship Does not exists',
+        }
+    return Response(response)
+
+
+@api_view(['POST', ])
+def Travel(request):
+    if (spaceship.objects.filter(pk=request.data['id']).exists()) and (
+    location.objects.filter(loc_id=request.data['dest_id']).exists()):
+        i = spaceship.objects.filter(ship_id=request.data['id'])[0]
+        if i.status == 'operational' and i.loc.loc_id != request.data['dest_id']:
+            k = location.objects.filter(loc_id=i.loc.loc_id)[0]
+            k.capacity += 1
+            j = location.objects.filter(loc_id=request.data['dest_id'])[0]
+            if j.capacity > 0 and j.capacity <= 10:
+                j.capacity -= 1
+                j.save()
+                i.loc = j
+                i.save()
+                k.save()
+                response = {
+                    'success': 'True',
+                    'statusCode': "200",
+                    'message': 'Spaceship succesfully travelled',
+                }
+            else:
+                response = {
+                    'success': 'False',
+                    'statusCode': "308",
+                    'message': 'Capacity of Destination port is insufficient',
+                }
+        else:
+            response = {
+                'success': 'False',
+                'statusCode': "309",
+                'message': 'Spaceship is not in Operational state or Destination port is same as Current port',
+            }
+    else:
+        response = {
+            'success': 'False',
+            'statusCode': "306",
+            'message': 'Spaceship or Destination Spaceport does not exists',
+        }
+    return Response(response)
+
+@api_view(['POST', ])
 def AddSpaceship(request):
     if (spaceship.objects.filter(pk=request.data['id']).exists()):
         # e=spaceship.objects.filter(pk=request.data['id'])
