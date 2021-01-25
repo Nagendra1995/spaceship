@@ -1,7 +1,7 @@
+from django.http import JsonResponse
 from rest_framework import status
 # from rest_framework.generics import RetrieveAPIView
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
 
 from api.models import spaceship, location
 
@@ -33,7 +33,7 @@ def DelSpaceship(request):
             'statusCode': "306",
             'message': 'Spaceship Does not exists',
         }
-    return Response(response)
+    return JsonResponse(response)
 
 
 @api_view(['POST', ])
@@ -50,7 +50,7 @@ def DelLocation(request):
             'statusCode': "305",
             'message': 'Location Does not exists',
         }
-    return Response(response)
+    return JsonResponse(response)
 
 
 @api_view(['POST', ])
@@ -77,7 +77,7 @@ def UpdateStatus(request):
             'statusCode': "306",
             'message': 'Spaceship Does not exists',
         }
-    return Response(response)
+    return JsonResponse(response)
 
 
 @api_view(['POST', ])
@@ -118,7 +118,7 @@ def Travel(request):
             'statusCode': "306",
             'message': 'Spaceship or Destination Spaceport does not exists',
         }
-    return Response(response)
+    return JsonResponse(response)
 
 @api_view(['POST', ])
 def AddSpaceship(request):
@@ -166,7 +166,7 @@ def AddSpaceship(request):
                             'statusCode': "303",
                             'message': 'Spaceship location capacity is full',
                         }
-                        return Response(response)
+                        return JsonResponse(response)
             else:
                 list_loc_id = []
                 l = location()
@@ -196,13 +196,13 @@ def AddSpaceship(request):
                 'statusCode': "301",
                 'message': e,
             }
-    return Response(response)
+    # response = json.dumps(response)
+    return JsonResponse(response)
 
 
 @api_view(['POST', ])
 def Addlocation(request):
     if (location.objects.filter(pk=request.data['id']).exists()):
-
         for i in location.objects.filter(loc_id=request.data['id']):
             id = i.loc_id
             city = i.city
@@ -222,7 +222,6 @@ def Addlocation(request):
 
     else:
         try:
-
             e = location()
             e.loc_id = request.data['id']
             e.city = request.data['city']
@@ -233,6 +232,8 @@ def Addlocation(request):
                 'statusCode': "200",
                 'message': 'Location added Successfully',
             }
+            # print(response)
+            #return JsonResponse(response)
         except Exception as e:
             print(e)
             response = {
@@ -240,4 +241,5 @@ def Addlocation(request):
                 'statusCode': "301",
                 'message': e,
             }
-    return Response(response)
+    # print(response)
+    return JsonResponse(response)
