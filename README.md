@@ -26,8 +26,11 @@ Build and Run Backend Server
 
 •	python3 -m pip install -r requirement.txt
 
-5.	Now, in the same terminal run this command to run the backend server
+5.	Now, in the same terminal run this command to run the backend server or you can run Few Unit testcases written
 
 •	python3 manage.py runserver
+
+•	python3 manage.py tests
+
 
 6.	The backend server should be up and running.
